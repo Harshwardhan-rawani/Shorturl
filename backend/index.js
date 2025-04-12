@@ -21,7 +21,10 @@ app.use(express.json());
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("Connected to MongoDB"))
   .catch((error) => console.log("Error connecting to MongoDB", error));
-
+  app.get("/", (req, res) => {
+    res.send("<div>working fine</div>");
+  });
+  
 app.use("/api/auth", authRoutes);
 app.use("/api", shorturl);
 app.use("/api", analytics);
