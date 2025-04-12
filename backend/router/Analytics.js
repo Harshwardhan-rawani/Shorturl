@@ -10,7 +10,7 @@ router.get("/redirect/:shortId", async (req, res) => {
     try {
       const { shortId } = req.params;
       const urlDoc = await Url.findOne({ alias: shortId });
-  
+      const data = urlDoc
       if (!urlDoc) {
         return res.status(404).json({ status: "error", message: "URL not found" });
       }
@@ -35,9 +35,9 @@ router.get("/redirect/:shortId", async (req, res) => {
       if (!recentClick) {
         urlDoc.clicks += 1;
         await urlDoc.save();
-  
+
         const logEntry = new Analytics({
-          userId: urlDoc.userId,  // ensure this exists in the Shorturl model
+          id: data.id,  
           shortId,
           timestamp: new Date(),
           ip: req.ip,
@@ -68,9 +68,9 @@ router.get("/redirect/:shortId", async (req, res) => {
       if (!decoded || !decoded.userId) {
         return res.status(401).json({ message: "Invalid token" });
       }
-   
+  
       const data = await Analytics.find({ id: decoded.userId })
-      console.log(data)
+  
       if (!data || data.length === 0) {
         return res.status(404).json({ message: "No analytics data found for this user" });
       }
