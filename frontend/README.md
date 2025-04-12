@@ -1,12 +1,61 @@
-# React + Vite
+# 🔗 ShortURL Web App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A full-stack **URL Shortener** web application built using the **MERN stack (MongoDB, Express, React, Node.js)** that allows authenticated users to:
 
-Currently, two official plugins are available:
+- Generate **shortened URLs**
+- Create **QR codes** for any URL
+- Track **analytics** with interactive **line charts**, **bar charts**, and a **click data table**
+- Handle multiple users with **JWT-based authentication**
+- Enjoy a **responsive UI** designed for both mobile and desktop
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## Expanding the ESLint configuration
+## 📸 Features
 
-If you are developing a production application, we recommend using TypeScript and enable type-aware lint rules. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- 🔐 **Authentication**: Secure login/signup system using JWT
+- ✂️ **URL Shortener**: Enter a long URL and generate a unique short URL
+- 📊 **Analytics Dashboard**:
+  - Line and bar charts to track click activity
+  - A responsive table showing:
+    - Original (long) URL
+    - Short URL
+    - Number of clicks
+- 📱 **QR Code Generator**: Generate QR codes for easy sharing
+- 🧑‍🤝‍🧑 **Multi-user Support**: Each user manages their own shortened URLs
+- 🧿 **Responsive Design**: Optimized for all screen sizes
+
+---
+
+## 🚀 Tech Stack
+
+- **Frontend**: React, Tailwind CSS, Chart.js / Recharts
+- **Backend**: Node.js, Express
+- **Database**: MongoDB (with Mongoose)
+- **Authentication**: JWT (JSON Web Tokens)
+- **Others**: QR Code Generator Library, Axios, dotenv
+
+---
+
+## 📂 Folder Structure
+
+```bash
+shorturl-app/
+│
+├── client/               # React frontend
+│   ├── src/
+│   │   ├── components/   # UI components
+│   │   ├── pages/        # Login, Signup, Dashboard, etc.
+│   │   ├── App.js
+│   │   └── ...
+│
+├── server/               # Node.js + Express backend
+│   ├── controllers/
+│   ├── models/
+│   ├── routes/
+│   ├── middleware/
+│   ├── server.js
+│   └── ...
+│
+├── .env
+├── README.md
+└── package.json
