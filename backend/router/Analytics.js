@@ -54,7 +54,7 @@ router.get("/redirect/:shortId", async (req, res) => {
     }
   });
 
-router.get("/analytic", async (req, res) => {
+  router.get("/analytic", async (req, res) => {
     try {
       const authHeader = req.headers.authorization;
   
@@ -63,37 +63,38 @@ router.get("/analytic", async (req, res) => {
       }
   
       const token = authHeader.split(" ")[1];
-  
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
   
       if (!decoded || !decoded.userId) {
         return res.status(401).json({ message: "Invalid token" });
       }
-  
-      const data = await Analytics.find({ id: decoded.userId }).lean();
-  
+   
+      const data = await Analytics.find({ id: decoded.userId })
+      console.log(data)
       if (!data || data.length === 0) {
         return res.status(404).json({ message: "No analytics data found for this user" });
       }
   
-      
-      const deviceCounts = data.reduce((acc, row) => {
-        const device = row.device; 
-      
-        if (device === "mobile") {
-          acc.window = (acc.mobile || 0) + 1;
-        } else if (device === "tablet") {
-          acc.tablet = (acc.tablet || 0) + 1;
-        } else if (device === "desktop") {
-          acc.desktop = (acc.desktop || 0) + 1;
-        }
+      const deviceCounts = data.reduce(
+        (acc, row) => {
+          const device = row.device?.toLowerCase(); // Ensure case-insensitive
   
-        return acc;
-      }, {});
+          if (device === "mobile") {
+            acc.mobile += 1;
+          } else if (device === "tablet") {
+            acc.tablet += 1;
+          } else if (device === "desktop") {
+            acc.desktop += 1;
+          }
   
+          return acc;
+        },
+        { mobile: 0, tablet: 0, desktop: 0 } // Default initial values
+      );
+       console.log(deviceCounts)
       return res.json({ data: deviceCounts });
     } catch (err) {
-      console.error(err);
+      console.error("Error in /analytic:", err);
       res.status(500).json({ message: "Internal server error" });
     }
   });

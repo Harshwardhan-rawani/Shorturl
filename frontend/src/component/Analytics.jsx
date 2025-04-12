@@ -62,6 +62,7 @@ const Analytics = () => {
       });
 
       const counts = res.data.data;
+    console.log(counts)
       const formatted = [
         { device: "Mobile", clicks: counts.mobile || 0 },
         { device: "Tablet", clicks: counts.tablet || 0 },
