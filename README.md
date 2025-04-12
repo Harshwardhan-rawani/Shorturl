@@ -43,16 +43,16 @@ shorturl-app/
 │
 ├── client/               # React frontend
 │   ├── src/
-│   │   ├── components/   # UI components
-│   │   ├── pages/        # Login, Signup, Dashboard, etc.
+│   │   ├── components/   # UI components Login, Signup, Dashboard, etc.
+│   │   |
 │   │   ├── App.js
 │   │   └── ...
 │
 ├── server/               # Node.js + Express backend
-│   ├── controllers/
+│   |
 │   ├── models/
 │   ├── routes/
-│   ├── middleware/
+│   |
 │   ├── server.js
 │   └── ...
 │
