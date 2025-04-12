@@ -13,14 +13,10 @@ const RedirectPage = () => {
   
     const fetchAndRedirect = async () => {
       try {
-        const token = localStorage.getItem("authToken");
+       
         const response = await axios.get(
           `${import.meta.env.VITE_URL}/api/redirect/${shortId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
+        
         );
   
         if (!didRedirect && response.status === 200 && response.data.originalUrl) {
