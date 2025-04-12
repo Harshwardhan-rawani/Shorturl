@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 
 //model
-const authmodel = require("./model/Auth")
+
 
 const authRoutes = require("./router/Auth");
 const shorturl = require("./router/Shorturl");
@@ -12,8 +12,10 @@ const analytics = require("./router/Analytics")
 const app = express();
 
 
-
-app.use(cors());
+app.use(cors({
+    origin: process.env.F_URL, 
+    credentials: true
+  }));
 app.use(express.json());
 
 mongoose.connect(process.env.MONGO_URI)

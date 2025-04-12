@@ -26,7 +26,7 @@ router.post("/create-short-link", async (req, res) => {
 
   try {
     const alias = customAlias || generateRandomAlias();
-    const shortUrl = `${process.env.VITE_URL}/redirect/${alias}`;
+    const shortUrl = `${process.env.F_URL}/redirect/${alias}`;
 
     // Check if alias is already taken
     const existing = await ShortLink.findOne({ alias });
