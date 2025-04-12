@@ -81,7 +81,7 @@ router.get("/analytic", async (req, res) => {
         const device = row.device; 
       
         if (device === "mobile") {
-          acc.window = (acc.window || 0) + 1;
+          acc.window = (acc.mobile || 0) + 1;
         } else if (device === "tablet") {
           acc.tablet = (acc.tablet || 0) + 1;
         } else if (device === "desktop") {

@@ -85,7 +85,16 @@ const Analytics = () => {
     loadAllData();
   }, []);
 
-  if (loading) return <div className="text-center py-12 text-gray-600">Loading...</div>;
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-100">
+        <div className="flex flex-col items-center space-y-4">
+          <div className="w-12 h-12 border-4 border-orange-500 border-dashed rounded-full animate-spin"></div>
+          <p className="text-gray-600 text-lg">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen w-screen bg-radial from-[#ffad81dd] to-[#fff6ec9a] py-20 px-4">
