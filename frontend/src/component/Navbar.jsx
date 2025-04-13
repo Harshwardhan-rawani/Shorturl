@@ -106,8 +106,12 @@ function Navbar() {
                 <Link to="/about" onClick={() => setIsMenuOpen(false)}>About</Link>
                 <Link to="/contact" onClick={() => setIsMenuOpen(false)}>Contact</Link>
                 {isLoggedIn ? (
-                  <div className="flex items-center gap-2 text-orange-200">
-                    <FaUserCircle className="text-2xl" />
+                    <div className="flex items-center gap-2 text-orange-600 font-medium">
+                    <FaUserCircle className="text-4xl" />
+                    <button 
+                    onClick={()=>{localStorage.removeItem("authToken"); window.location.reload()}}
+                    className="bg-orange-600 text-white px-4 py-1 rounded-full hover:bg-orange-700 transition">Logout</button>
+                    
                   </div>
                 ) : (
                   <>
