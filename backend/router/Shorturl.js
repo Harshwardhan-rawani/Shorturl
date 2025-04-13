@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const ShortLink = require("../model/Shorturl");
+const Analytics = require("../model/Analytics")
 const jwt = require('jsonwebtoken');
 
 const generateRandomAlias = () => {
@@ -89,6 +90,34 @@ router.get("/create-short-link", async (req, res) => {
 });
 
 
+router.delete("/create-short-link/:alias", async (req, res) => {
+  try {
+    const { alias } = req.params;
+
+    if (!alias) {
+      return res.status(400).json({ message: "Alias parameter is missing" });
+    }
+
+    // Delete the short link
+    const deletedShortLink = await ShortLink.findOneAndDelete({ alias });
+
+    if (!deletedShortLink) {
+      return res.status(404).json({ message: "Short URL not found" });
+    }
+
+    // Construct the full short URL to match what's stored in analytics
+   
+
+    // Delete analytics data related to this short URL
+    await Analytics.deleteMany({ shortId : alias });
+
+    res.status(200).json({ message: "Short link and related analytics deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting short link and analytics:", error.message);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
 
 
 module.exports = router;
+

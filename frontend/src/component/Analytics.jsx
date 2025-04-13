@@ -12,7 +12,14 @@ import {
   Bar,
   Legend,
   ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
 } from "recharts";
+import { AiOutlineLineChart, AiOutlineBarChart, AiOutlinePieChart } from "react-icons/ai";
+import { Tooltip as ReactTooltip } from "react-tooltip";
+
+const COLORS = ["#f97316", "#fb923c", "#fdba74"];
 
 const Analytics = () => {
   const [tableData, setTableData] = useState([]);
@@ -20,10 +27,10 @@ const Analytics = () => {
   const [barChartData, setBarChartData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [selectedChart, setSelectedChart] = useState("line");
 
   const token = localStorage.getItem("authToken");
 
-  // Fetch Short Links
   const fetchShortLinks = async () => {
     try {
       const res = await axios.get(`${import.meta.env.VITE_URL}/api/create-short-link`, {
@@ -33,7 +40,6 @@ const Analytics = () => {
       const shortLinks = res.data.data;
       setTableData(shortLinks);
 
-      // Aggregate Line Chart Data
       const aggregated = shortLinks.reduce((acc, row) => {
         const date = new Date(row.creationDate).toLocaleDateString();
         const clicks = row.clicks;
@@ -54,7 +60,6 @@ const Analytics = () => {
     }
   };
 
-  // Fetch Device Analytics
   const fetchDeviceAnalytics = async () => {
     try {
       const res = await axios.get(`${import.meta.env.VITE_URL}/api/analytic`, {
@@ -62,7 +67,7 @@ const Analytics = () => {
       });
 
       const counts = res.data.data;
-    console.log(counts)
+
       const formatted = [
         { device: "Mobile", clicks: counts.mobile || 0 },
         { device: "Tablet", clicks: counts.tablet || 0 },
@@ -75,7 +80,6 @@ const Analytics = () => {
     }
   };
 
-  // Combined Fetch
   useEffect(() => {
     const loadAllData = async () => {
       setLoading(true);
@@ -97,10 +101,76 @@ const Analytics = () => {
     );
   }
 
+
+  
+  
+  const renderChart = () => {
+    if (selectedChart === "line") {
+      return lineChartData.length === 0 ? (
+        <div className="text-center text-gray-500 py-8">
+          No data available for line chart.
+        </div>
+      ) : (
+        <ResponsiveContainer width="100%" height={250}>
+          <LineChart data={lineChartData}>
+            <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
+            <XAxis dataKey="date" />
+            <YAxis />
+            <Tooltip />
+            <Line type="monotone" dataKey="clicks" stroke="#f97316" strokeWidth={2} />
+          </LineChart>
+        </ResponsiveContainer>
+      );
+    }
+
+    if (selectedChart === "bar") {
+      return barChartData.every(d => d.clicks === 0) ? (
+        <div className="text-center text-gray-500 py-8">
+          No data available for bar chart.
+        </div>
+      ) : (
+        <ResponsiveContainer width="100%" height={250}>
+          <BarChart data={barChartData}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="device" />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Bar dataKey="clicks" fill="#f97316" radius={[6, 6, 0, 0]} />
+          </BarChart>
+        </ResponsiveContainer>
+      );
+    }
+
+    if (selectedChart === "pie") {
+      return barChartData.every(d => d.clicks === 0) ? (
+        <div className="text-center text-gray-500 py-8">
+          No data available for pie chart.
+        </div>
+      ) : (
+        <ResponsiveContainer width="100%" height={250}>
+          <PieChart>
+            <Tooltip />
+            <Pie
+              data={barChartData}
+              dataKey="clicks"
+              nameKey="device"
+              outerRadius={90}
+              label
+            >
+              {barChartData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+              ))}
+            </Pie>
+          </PieChart>
+        </ResponsiveContainer>
+      );
+    }
+  };
+
   return (
-    <div className="min-h-screen w-screen bg-radial from-[#ffad81dd] to-[#fff6ec9a] py-20 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-[#ffad81dd] to-[#fff6ec9a] py-20 px-4">
       <motion.div
-        exit={{ opacity: 0 }}
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
@@ -108,79 +178,38 @@ const Analytics = () => {
       >
         <h2 className="text-xl font-bold text-orange-600 mb-10">Analytics Dashboard</h2>
 
-        {/* Charts */}
-        <div className="grid md:grid-cols-2 gap-6 w-full">
-          {/* Line Chart */}
-          {!error && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="backdrop-blur-md bg-white/70 border border-white/40 shadow-lg rounded-2xl p-6"
+        {/* Tabs */}
+        <div className="flex justify-center gap-6 mb-6">
+          {[
+            { type: "line", icon: <AiOutlineLineChart size={24} />, label: "Line Chart" },
+            { type: "bar", icon: <AiOutlineBarChart size={24} />, label: "Bar Chart" },
+            { type: "pie", icon: <AiOutlinePieChart size={24} />, label: "Pie Chart" },
+          ].map((tab) => (
+            <button
+              key={tab.type}
+              data-tooltip-id={`tooltip-${tab.type}`}
+              onClick={() => setSelectedChart(tab.type)}
+              className={`p-3 rounded-full transition hover:bg-orange-200 ${
+                selectedChart === tab.type ? "bg-orange-500 text-white" : "bg-white text-orange-600"
+              }`}
             >
-              <h3 className="text-lg font-semibold mb-4 text-gray-800 flex items-center gap-2">
-                📈 Clicks Over Time
-              </h3>
-              {lineChartData.length === 0 ? (
-                <div className="text-center text-gray-500 py-8">
-                  No data available for line chart.<br />
-                  <span className="text-sm text-gray-400">Share links to start tracking clicks.</span>
-                </div>
-              ) : (
-                <ResponsiveContainer width="100%" height={250}>
-                  <LineChart data={lineChartData}>
-                    <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
-                    <XAxis dataKey="date" />
-                    <YAxis />
-                    <Tooltip />
-                    <Line
-                      type="monotone"
-                      dataKey="clicks"
-                      stroke="#f97316"
-                      strokeWidth={2}
-                      dot={{ r: 3, strokeWidth: 2, fill: "#f97316" }}
-                      activeDot={{ r: 6 }}
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
-              )}
-            </motion.div>
-          )}
-
-          {/* Bar Chart */}
-          {!error && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="backdrop-blur-md bg-white/70 border border-white/40 shadow-lg rounded-2xl p-6"
-            >
-              <h3 className="text-lg font-semibold mb-4 text-gray-800 flex items-center gap-2">
-                📊 Device Clicks Breakdown
-              </h3>
-              {barChartData.every(device => device.clicks === 0) ? (
-                <div className="text-center text-gray-500 py-8">
-                  No data available for bar chart.<br />
-                  <span className="text-sm text-gray-400">Start by creating and sharing short links!</span>
-                </div>
-              ) : (
-                <ResponsiveContainer width="100%" height={250}>
-                  <BarChart data={barChartData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="device" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Bar dataKey="clicks" fill="#f97316" radius={[6, 6, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-              )}
-            </motion.div>
-          )}
+              {tab.icon}
+              <ReactTooltip id={`tooltip-${tab.type}`} place="top" content={tab.label} />
+            </button>
+          ))}
         </div>
 
+        <motion.div
+          className="backdrop-blur-md bg-white/70 border border-white/40 shadow-lg rounded-2xl p-6 mb-12"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          {renderChart()}
+        </motion.div>
+
         {/* Table */}
-        <div className="backdrop-blur-md bg-white/70 border border-white/40 shadow-lg rounded-2xl p-4 my-12 overflow-x-auto">
+        <div className="backdrop-blur-md bg-white/70 border border-white/40 shadow-lg rounded-2xl p-4 overflow-x-auto">
           <h3 className="text-lg font-semibold mb-4 text-gray-800">Short Links</h3>
           {tableData.length === 0 ? (
             <div className="text-center text-gray-500">No short links found.</div>
@@ -193,22 +222,24 @@ const Analytics = () => {
                   <th className="px-4 py-2">Clicks</th>
                   <th className="px-4 py-2">Created</th>
                   <th className="px-4 py-2">Status</th>
+              
+
                 </tr>
               </thead>
               <tbody>
                 {tableData.map((row, idx) => (
                   <motion.tr
-                    key={row.id || idx}
+                    key={ idx}
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: idx * 0.05 }}
+                    transition={{ delay: idx * 0.03 }}
                     className="border-b border-white/30 hover:bg-white/10 transition"
                   >
-                    <td className="px-4 py-2 break-words">{row.longUrl}</td>
-                    <td className="px-4 py-2 break-all text-blue-700">
-                      <a href={row.shortUrl} target="_blank" rel="noreferrer">
-                        {row.shortUrl}
-                      </a>
+                    <td className="px-4 py-2 max-w-[300px] truncate" title={row.longUrl}>
+                      {row.longUrl}
+                    </td>
+                    <td className="px-4 py-2 break-all text-blue-700 max-w-[200px] truncate" title={row.shortUrl}>
+                      <a href={row.shortUrl} target="_blank" rel="noreferrer">{row.shortUrl}</a>
                     </td>
                     <td className="px-4 py-2">{row.clicks}</td>
                     <td className="px-4 py-2">{new Date(row.creationDate).toLocaleDateString()}</td>
@@ -219,6 +250,8 @@ const Analytics = () => {
                         <span className="text-red-500">Expired</span>
                       )}
                     </td>
+ 
+
                   </motion.tr>
                 ))}
               </tbody>

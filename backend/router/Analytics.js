@@ -91,7 +91,7 @@ router.get("/redirect/:shortId", async (req, res) => {
         },
         { mobile: 0, tablet: 0, desktop: 0 } // Default initial values
       );
-       console.log(deviceCounts)
+   
       return res.json({ data: deviceCounts });
     } catch (err) {
       console.error("Error in /analytic:", err);
