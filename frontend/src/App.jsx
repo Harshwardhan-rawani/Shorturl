@@ -17,8 +17,12 @@ import Errorpage from './component/Errorpage';
 function App() {
   const location = useLocation();
   
-  
-  const isRedirectPath = location.pathname.startsWith('/redirect');
+  const isRedirectPath =
+  location.pathname.startsWith('/redirect') ||
+  location.pathname === '/404' ||
+  location.pathname === '/expired' ||
+  location.pathname === '/error';
+
 
   return (
     <>
