@@ -75,7 +75,7 @@ const Card = () => {
                 href={shortLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-600 text-sm underline break-all"
+                className="text-blue-600 text-md underline break-all"
               >
                 {shortLink}
               </a>
